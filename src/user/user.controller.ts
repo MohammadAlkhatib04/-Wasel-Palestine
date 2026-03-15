@@ -3,40 +3,46 @@ import {
   Get,
   Post,
   Body,
-  Patch,
-  Param,
-  Delete,
+  HttpCode,
+  HttpStatus,
+  Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-
+import { RegisterUserDto } from './dto/register-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
+import { CurrentUser } from './decorator/current-user.decorator';
+import type { JWTPayloadType } from 'src/utils/types';
+import { AuthGuard } from './guards/auth.gard';
+import { Roles } from './decorator/user-role.decorator';
+import { AuthRolesGuard } from './guards/auth-roles.guard';
+import { UserType } from 'src/utils/user.type';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  @Post('register')
+  registerUser(@Body() registerUserDto: RegisterUserDto) {
+    return this.userService.registerUser(registerUserDto);
   }
 
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  loginUser(@Body() loginUserDto: LoginUserDto) {
+    return this.userService.loginUser(loginUserDto);
+  }
+
+  @Get('current-user')
+  @UseGuards(AuthGuard)
+  public getCurrentUser(@CurrentUser() payload: JWTPayloadType) {
+    return this.userService.getCurrentUser(payload.id);
+  }
+  // Just to understand how it works
+  //**************************************************************************
   @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @Roles(UserType.ADMIN, UserType.CITIZEN)
+  @UseGuards(AuthRolesGuard)
+  public getAllUsers() {
+    return this.userService.getAllUsers();
   }
 }

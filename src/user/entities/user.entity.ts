@@ -5,6 +5,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UserType } from 'src/utils/user.type';
+import { CURRENT_TIMESTAMP } from '../../utils/constants';
 
 @Entity('users')
 export class User {
@@ -12,28 +14,30 @@ export class User {
   id: number;
 
   @Column({ type: 'varchar', length: 255 })
-  full_name: string;
+  fullName: string;
 
   @Column({ type: 'varchar', unique: true })
   email: string;
 
   @Column({ type: 'varchar' })
-  password_hash: string;
+  password: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'varchar', nullable: true, unique: true })
   phone: string;
 
-  @Column({ type: 'varchar', default: 'citizen' })
-  role: string;
+  @Column({ type: 'enum', enum: UserType, default: UserType.CITIZEN })
+  userType: UserType;
 
   @Column({ type: 'boolean', default: true })
-  is_active: boolean;
+  isActive: boolean;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ type: 'timestamp', default: () => CURRENT_TIMESTAMP })
+  createdAt: Date;
 
-  @UpdateDateColumn()
-  updated_at: Date;
-
-  //some commit here
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => CURRENT_TIMESTAMP,
+    onUpdate: CURRENT_TIMESTAMP,
+  })
+  updatedAt: Date;
 }
