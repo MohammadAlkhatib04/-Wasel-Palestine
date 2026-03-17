@@ -1,15 +1,6 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { CheckpointService } from './checkpoint.service';
 import { CreateCheckpointDto } from './dto/create-checkpoint.dto';
-import { UpdateCheckpointDto } from './dto/update-checkpoint.dto';
 
 @Controller('checkpoint')
 export class CheckpointController {
@@ -17,26 +8,26 @@ export class CheckpointController {
 
   @Post()
   create(@Body() createCheckpointDto: CreateCheckpointDto) {
-    return this.checkpointService.create(createCheckpointDto);
+    return this.checkpointService.createCheckpoint(createCheckpointDto);
   }
 
   @Get()
   findAll() {
-    return this.checkpointService.findAll();
+    return this.checkpointService.getAllCheckpoint();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.checkpointService.findOne(+id);
+  findOne(@Param('name') name: string) {
+    return this.checkpointService.findOne(name);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateCheckpointDto: UpdateCheckpointDto,
-  ) {
-    return this.checkpointService.update(+id, updateCheckpointDto);
-  }
+  // @Patch(':name')
+  // update(
+  //   @Param('name') name: string,
+  //   @Body() updateCheckpointDto: UpdateCheckpointDto,
+  // ) {
+  //   return this.checkpointService.update(name, updateCheckpointDto);
+  // }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
