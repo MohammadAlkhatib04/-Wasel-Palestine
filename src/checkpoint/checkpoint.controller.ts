@@ -30,13 +30,13 @@ export class CheckpointController {
     return this.checkpointService.findOne(name);
   }
 
-  @Patch(':name')
-  update(
-    @Param('name') name: string,
-    @Body() updateCheckpointDto: UpdateCheckpointDto,
-  ) {
-    return this.checkpointService.update(name, updateCheckpointDto);
-  }
+  // @Patch(':name')
+  // update(
+  //   @Param('name') name: string,
+  //   @Body() updateCheckpointDto: UpdateCheckpointDto,
+  // ) {
+  //   return this.checkpointService.update(name, updateCheckpointDto);
+  // }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
