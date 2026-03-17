@@ -3,12 +3,21 @@ import { CreateCheckpointDto } from './dto/create-checkpoint.dto';
 import { Repository } from 'typeorm';
 import { Checkpoint } from './entities/checkpoint.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { SearchCheckpointDto } from './dto/search-checkpoint.dto';
+import { CheckpointSearchContext } from './context/checkpoint-search.context';
+import { SearchByCityStrategy } from './strategies/search-by-city.strategy';
+import { SearchByCityStatusStrategy } from './strategies/search-by-city-status.strategy';
+import { SearchByNameStrategy } from './strategies/search-by-name.strategy';
 
 @Injectable()
 export class CheckpointService {
   constructor(
     @InjectRepository(Checkpoint)
     private readonly checkpointRepository: Repository<Checkpoint>,
+    private context: CheckpointSearchContext,
+    private searchByCity: SearchByCityStrategy,
+    private searchByName: SearchByNameStrategy,
+    private searchByCityStatus: SearchByCityStatusStrategy,
   ) {}
   public async createCheckpoint(createCheckpointDto: CreateCheckpointDto) {
     return this.checkpointRepository.save(createCheckpointDto);
@@ -16,6 +25,20 @@ export class CheckpointService {
 
   public async getAllCheckpoint() {
     return this.checkpointRepository.find();
+  }
+
+  public async searchCheckpoint(query: SearchCheckpointDto) {
+    if (query.city && query.status) {
+      this.context.setStrategy(this.searchByCityStatus);
+    } else if (query.city) {
+      this.context.setStrategy(this.searchByCity);
+    } else if (query.name) {
+      this.context.setStrategy(this.searchByName);
+    } else {
+      throw new Error('Invalid search params');
+    }
+
+    return this.context.execute(query);
   }
 
   public async findOne(name: string) {

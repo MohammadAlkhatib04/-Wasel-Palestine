@@ -1,6 +1,15 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { CheckpointService } from './checkpoint.service';
 import { CreateCheckpointDto } from './dto/create-checkpoint.dto';
+import { SearchCheckpointDto } from './dto/search-checkpoint.dto';
 
 @Controller('checkpoint')
 export class CheckpointController {
@@ -14,6 +23,11 @@ export class CheckpointController {
   @Get()
   findAll() {
     return this.checkpointService.getAllCheckpoint();
+  }
+
+  @Get('search')
+  search(@Query() query: SearchCheckpointDto) {
+    return this.checkpointService.searchCheckpoint(query);
   }
 
   @Get(':id')

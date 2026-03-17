@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { CheckpointStatus } from '../enums/checkpoint-status.enum';
 
 @Entity('checkpoints')
 export class Checkpoint {
@@ -16,7 +17,7 @@ export class Checkpoint {
   name: string;
 
   @Column({ type: 'varchar', length: 255 })
-  location: string;
+  city: string;
 
   @Column({ type: 'decimal', precision: 9, scale: 6, default: 0 })
   latitude?: number;
@@ -26,10 +27,10 @@ export class Checkpoint {
 
   @Column({
     type: 'enum',
-    enum: ['open', 'closed', 'restricted'],
-    default: 'open',
+    enum: CheckpointStatus,
+    default: CheckpointStatus.OPEN,
   })
-  status: 'open' | 'closed' | 'restricted';
+  status: CheckpointStatus;
 
   @CreateDateColumn({ type: 'timestamp', default: () => CURRENT_TIMESTAMP })
   createdAt: Date;
