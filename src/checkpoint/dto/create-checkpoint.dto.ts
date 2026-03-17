@@ -6,6 +6,7 @@ import {
   MaxLength,
   IsOptional,
 } from 'class-validator';
+import { CheckpointStatus } from '../enums/checkpoint-status.enum';
 
 export class CreateCheckpointDto {
   @IsNotEmpty()
@@ -16,7 +17,7 @@ export class CreateCheckpointDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)
-  location: string;
+  city: string;
 
   @IsOptional()
   @IsNumber()
@@ -26,7 +27,7 @@ export class CreateCheckpointDto {
   @IsNumber()
   longitude: number;
 
-  @IsEnum(['open', 'closed', 'restricted'])
+  @IsEnum(CheckpointStatus)
   @IsOptional()
-  status: 'open' | 'closed' | 'restricted';
+  status: CheckpointStatus;
 }
