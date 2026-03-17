@@ -5,7 +5,6 @@ import {
   Body,
   HttpCode,
   HttpStatus,
-  Headers,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -15,8 +14,9 @@ import { CurrentUser } from './decorator/current-user.decorator';
 import type { JWTPayloadType } from 'src/utils/types';
 import { AuthGuard } from './guards/auth.gard';
 import { Roles } from './decorator/user-role.decorator';
-import { AuthRolesGuard } from './guards/auth-roles.guard';
 import { UserType } from 'src/utils/user.type';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -39,9 +39,12 @@ export class UserController {
   }
   // Just to understand how it works
   //**************************************************************************
+  // @Get()
+  // @Roles(UserType.ADMIN, UserType.CITIZEN)
+  // @UseGuards(AuthRolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
-  @Roles(UserType.ADMIN, UserType.CITIZEN)
-  @UseGuards(AuthRolesGuard)
+  @Roles(UserType.CITIZEN)
   public getAllUsers() {
     return this.userService.getAllUsers();
   }

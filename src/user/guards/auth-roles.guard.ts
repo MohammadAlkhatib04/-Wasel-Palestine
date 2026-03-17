@@ -21,7 +21,7 @@ export class AuthRolesGuard implements CanActivate {
     private readonly userService: UserService,
   ) {}
   public async canActivate(context: ExecutionContext) {
-    const roles: UserType = this.reflector.getAllAndOverride('roles', [
+    const roles: UserType[] = this.reflector.getAllAndOverride('roles', [
       context.getHandler(),
       context.getClass(),
     ]);
@@ -45,7 +45,7 @@ export class AuthRolesGuard implements CanActivate {
           return true;
         }
       } catch (e) {
-        throw new UnauthorizedException('Invalid token' + e);
+        throw new UnauthorizedException('Invalid token');
       }
     } else {
       throw new UnauthorizedException('Invalid token');
