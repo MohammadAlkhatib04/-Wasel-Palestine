@@ -6,18 +6,31 @@ import {
   Param,
   Delete,
   Query,
+  Patch,
 } from '@nestjs/common';
 import { CheckpointService } from './checkpoint.service';
 import { CreateCheckpointDto } from './dto/create-checkpoint.dto';
 import { SearchCheckpointDto } from './dto/search-checkpoint.dto';
+import { FindCheckpointDto } from './dto/find-checkpoint.dto';
+import { UpdateCheckpointDto } from './dto/update-checkpoint.dto';
+import { CurrentUser } from 'src/user/decorator/current-user.decorator';
+import type { JWTPayloadType } from 'src/utils/types';
 
 @Controller('checkpoint')
 export class CheckpointController {
   constructor(private readonly checkpointService: CheckpointService) {}
-
+  // @Get()
+  // @Roles(UserType.ADMIN, UserType.CITIZEN)
+  // @UseGuards(AuthRolesGuard)
   @Post()
-  create(@Body() createCheckpointDto: CreateCheckpointDto) {
-    return this.checkpointService.createCheckpoint(createCheckpointDto);
+  create(
+    @Body() createCheckpointDto: CreateCheckpointDto,
+    @CurrentUser() user: JWTPayloadType,
+  ) {
+    return this.checkpointService.createCheckpoint(
+      user.id,
+      createCheckpointDto,
+    );
   }
 
   @Get()
@@ -35,16 +48,15 @@ export class CheckpointController {
     return this.checkpointService.findOne(name);
   }
 
-  // @Patch(':name')
-  // update(
-  //   @Param('name') name: string,
-  //   @Body() updateCheckpointDto: UpdateCheckpointDto,
-  // ) {
-  //   return this.checkpointService.update(name, updateCheckpointDto);
-  // }
+  @Patch() update(
+    @Body() updateDto: UpdateCheckpointDto,
+    @Query() findDto: FindCheckpointDto,
+  ) {
+    return this.checkpointService.update(findDto, updateDto);
+  }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.checkpointService.remove(+id);
+  @Delete()
+  remove(@Query() query: FindCheckpointDto) {
+    return this.checkpointService.remove(query);
   }
 }

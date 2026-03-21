@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCheckpointDto } from './dto/create-checkpoint.dto';
 import { Repository } from 'typeorm';
 import { Checkpoint } from './entities/checkpoint.entity';
@@ -8,6 +12,8 @@ import { CheckpointSearchContext } from './context/checkpoint-search.context';
 import { SearchByCityStrategy } from './strategies/search-by-city.strategy';
 import { SearchByCityStatusStrategy } from './strategies/search-by-city-status.strategy';
 import { SearchByNameStrategy } from './strategies/search-by-name.strategy';
+import { FindCheckpointDto } from './dto/find-checkpoint.dto';
+import { UpdateCheckpointDto } from './dto/update-checkpoint.dto';
 
 @Injectable()
 export class CheckpointService {
@@ -19,7 +25,10 @@ export class CheckpointService {
     private searchByName: SearchByNameStrategy,
     private searchByCityStatus: SearchByCityStatusStrategy,
   ) {}
-  public async createCheckpoint(createCheckpointDto: CreateCheckpointDto) {
+  public async createCheckpoint(
+    userId: number,
+    createCheckpointDto: CreateCheckpointDto,
+  ) {
     return this.checkpointRepository.save(createCheckpointDto);
   }
 
@@ -45,27 +54,50 @@ export class CheckpointService {
     return this.checkpointRepository.findOne({ where: { name } });
   }
 
-  // public async update(name: string, updateCheckpointDto: UpdateCheckpointDto) {
-  //   try {
-  //     const searchCheckpoint = await this.findOne(name);
-  //     if (searchCheckpoint !== null) {
-  //       const { location, latitude, longitude, status } = updateCheckpointDto;
-  //       await this.checkpointRepository.update(searchCheckpoint.id, {
-  //         location,
-  //         latitude,
-  //         longitude,
-  //         status,
-  //       });
-  //       return `This action updates a #${name} checkpoint`;
-  //     } else {
-  //       throw new Error(`Checkpoint ${name} not found`);
-  //     }
-  //   } catch (err) {
-  //     return `This action have some error` + err;
-  //   }
-  // }
+  public async update(
+    findDto: FindCheckpointDto,
+    updateDto: UpdateCheckpointDto,
+  ) {
+    const { id, name } = findDto;
 
-  remove(id: number) {
-    return `This action removes a #${id} checkpoint`;
+    if (!id && !name) {
+      throw new BadRequestException('You must provide id or name');
+    }
+
+    const checkpoint = await this.checkpointRepository.findOne({
+      where: id ? { id } : { name },
+    });
+
+    if (!checkpoint) {
+      throw new NotFoundException('Checkpoint not found');
+    }
+
+    Object.assign(checkpoint, updateDto);
+
+    return this.checkpointRepository.save(checkpoint);
+  }
+
+  public async remove(findDto: FindCheckpointDto) {
+    try {
+      const { id, name } = findDto;
+
+      if (!id && !name) {
+        throw new BadRequestException('You must provide id or name');
+      }
+
+      const checkpoint = await this.checkpointRepository.findOne({
+        where: id ? { id } : { name },
+      });
+
+      if (!checkpoint) {
+        throw new NotFoundException('Checkpoint not found');
+      }
+
+      await this.checkpointRepository.remove(checkpoint);
+
+      return { message: 'Checkpoint deleted successfully' };
+    } catch (err) {
+      throw new Error('Somthing went wrong\n' + err);
+    }
   }
 }

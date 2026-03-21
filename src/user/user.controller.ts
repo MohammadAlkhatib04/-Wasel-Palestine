@@ -42,10 +42,10 @@ export class UserController {
   // @Get()
   // @Roles(UserType.ADMIN, UserType.CITIZEN)
   // @UseGuards(AuthRolesGuard)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get()
-  @Roles(UserType.CITIZEN)
-  public getAllUsers() {
-    return this.userService.getAllUsers();
-  }
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Get()
+  // @Roles(UserType.CITIZEN)
+  // public getAllUsers() {
+  //   return this.userService.getAllUsers();
+  // }
 }

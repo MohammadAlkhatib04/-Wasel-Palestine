@@ -4,9 +4,11 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { UserType } from 'src/utils/user.type';
 import { CURRENT_TIMESTAMP } from '../../utils/constants';
+import { Checkpoint } from 'src/checkpoint/entities/checkpoint.entity';
 
 @Entity('users')
 export class User {
@@ -40,4 +42,7 @@ export class User {
     onUpdate: CURRENT_TIMESTAMP,
   })
   updatedAt: Date;
+
+  @OneToMany(() => Checkpoint, (checkpoint) => checkpoint.createdBy)
+  checkpoints: Checkpoint[];
 }
