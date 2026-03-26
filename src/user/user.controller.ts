@@ -15,8 +15,7 @@ import type { JWTPayloadType } from 'src/utils/types';
 import { AuthGuard } from './guards/auth.gard';
 import { Roles } from './decorator/user-role.decorator';
 import { UserType } from 'src/utils/user.type';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { AuthRolesGuard } from './guards/auth-roles.guard';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -33,19 +32,15 @@ export class UserController {
   }
 
   @Get('current-user')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard) //this for verify token
   public getCurrentUser(@CurrentUser() payload: JWTPayloadType) {
     return this.userService.getCurrentUser(payload.id);
   }
-  // Just to understand how it works
-  //**************************************************************************
-  // @Get()
-  // @Roles(UserType.ADMIN, UserType.CITIZEN)
-  // @UseGuards(AuthRolesGuard)
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Get()
-  // @Roles(UserType.CITIZEN)
-  // public getAllUsers() {
-  //   return this.userService.getAllUsers();
-  // }
+
+  @Get()
+  @Roles(UserType.ADMIN)
+  @UseGuards(AuthRolesGuard)
+  public getAllUsers() {
+    return this.userService.getAllUsers();
+  }
 }
