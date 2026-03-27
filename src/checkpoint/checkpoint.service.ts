@@ -14,6 +14,8 @@ import { SearchByCityStatusStrategy } from './strategies/search-by-city-status.s
 import { SearchByNameStrategy } from './strategies/search-by-name.strategy';
 import { FindCheckpointDto } from './dto/find-checkpoint.dto';
 import { UpdateCheckpointDto } from './dto/update-checkpoint.dto';
+import { JWTPayloadType } from 'src/utils/types';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class CheckpointService {
@@ -24,12 +26,22 @@ export class CheckpointService {
     private searchByCity: SearchByCityStrategy,
     private searchByName: SearchByNameStrategy,
     private searchByCityStatus: SearchByCityStatusStrategy,
+    private userService: UserService,
   ) {}
   public async createCheckpoint(
-    userId: number,
     createCheckpointDto: CreateCheckpointDto,
+    userPayLoad: JWTPayloadType,
   ) {
-    return this.checkpointRepository.save(createCheckpointDto);
+    const user = await this.userService.getCurrentUser(userPayLoad.id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const checkpoint = this.checkpointRepository.create({
+      ...createCheckpointDto,
+      createdBy: user,
+    });
+
+    return this.checkpointRepository.save(checkpoint);
   }
 
   public async getAllCheckpoint() {

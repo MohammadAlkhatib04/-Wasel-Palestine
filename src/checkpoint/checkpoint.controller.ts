@@ -8,14 +8,13 @@ import {
   Query,
   Patch,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { CheckpointService } from './checkpoint.service';
 import { CreateCheckpointDto } from './dto/create-checkpoint.dto';
 import { SearchCheckpointDto } from './dto/search-checkpoint.dto';
 import { FindCheckpointDto } from './dto/find-checkpoint.dto';
 import { UpdateCheckpointDto } from './dto/update-checkpoint.dto';
-import { CurrentUser } from 'src/user/decorator/current-user.decorator';
-import type { JWTPayloadType } from 'src/utils/types';
 import { Roles } from 'src/user/decorator/user-role.decorator';
 import { AuthRolesGuard } from 'src/user/guards/auth-roles.guard';
 import { UserType } from 'src/utils/user.type';
@@ -26,13 +25,10 @@ export class CheckpointController {
   @Post()
   @Roles(UserType.ADMIN, UserType.MODERATOR)
   @UseGuards(AuthRolesGuard)
-  create(
-    @Body() createCheckpointDto: CreateCheckpointDto,
-    @CurrentUser() user: JWTPayloadType,
-  ) {
+  create(@Req() req, @Body() createCheckpointDto: CreateCheckpointDto) {
     return this.checkpointService.createCheckpoint(
-      user.id,
       createCheckpointDto,
+      req.user,
     );
   }
 
