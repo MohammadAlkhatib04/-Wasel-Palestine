@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { CheckpointModule } from './checkpoint/checkpoint.module';
 import { AppService } from './app.service';
+import { CheckpointStatusHistoryModule } from './checkpoint-status-history/checkpoint-status-history.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { AppService } from './app.service';
 
     UserModule,
     CheckpointModule,
+    CheckpointStatusHistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
