@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { CheckpointModule } from './checkpoint/checkpoint.module';
+import { ReportModule } from './report/report.module'; // 🔥 أضفناه
 import { AppService } from './app.service';
 
 @Module({
@@ -29,7 +30,9 @@ import { AppService } from './app.service';
 
     UserModule,
     CheckpointModule,
+    ReportModule, // 🔥 هذا أهم سطر
   ],
+
   controllers: [AppController],
   providers: [AppService],
 })
