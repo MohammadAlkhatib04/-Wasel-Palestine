@@ -12,6 +12,8 @@ import { Checkpoint } from 'src/checkpoint/entities/checkpoint.entity';
 import { CheckpointStatusHistory } from 'src/checkpoint-status-history/entities/checkpoint-status-history.entity';
 import { Incident } from 'src/incident/entities/incident.entity';
 
+import { Report } from '../../report/entities/report.entity';
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
@@ -62,4 +64,6 @@ export class User {
 
   @OneToMany(() => Incident, (incident) => incident.closedBy)
   closedIncidents!: Incident[];
+  @OneToMany(() => Report, (report) => report.user)
+  reports?: Report[];
 }
