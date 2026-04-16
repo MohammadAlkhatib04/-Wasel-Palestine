@@ -14,6 +14,7 @@ import { JWTPayloadType } from 'src/utils/types';
 import { LoginUserDto } from './dto/login-user.dto';
 @Injectable()
 export class UserService {
+  [x: string]: any;
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,

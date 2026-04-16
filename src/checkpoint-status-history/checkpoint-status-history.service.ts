@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCheckpointStatusHistoryDto } from './dto/create-checkpoint-status-history.dto';
-import { UpdateCheckpointStatusHistoryDto } from './dto/update-checkpoint-status-history.dto';
+import { UpdateCheckpointStatusDto } from './dto/update-checkpoint-status-history.dto';
 
 @Injectable()
 export class CheckpointStatusHistoryService {
@@ -16,7 +16,10 @@ export class CheckpointStatusHistoryService {
     return `This action returns a #${id} checkpointStatusHistory`;
   }
 
-  update(id: number, updateCheckpointStatusHistoryDto: UpdateCheckpointStatusHistoryDto) {
+  update(
+    id: number,
+    updateCheckpointStatusHistoryDto: UpdateCheckpointStatusDto,
+  ) {
     return `This action updates a #${id} checkpointStatusHistory`;
   }
 

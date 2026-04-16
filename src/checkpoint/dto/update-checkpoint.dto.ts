@@ -9,10 +9,6 @@ import { CheckpointStatus } from '../enums/checkpoint-status.enum';
 
 export class UpdateCheckpointDto {
   @IsOptional()
-  @IsNumber()
-  id?: number;
-
-  @IsOptional()
   @IsString()
   @MaxLength(100)
   name?: string;
@@ -20,17 +16,17 @@ export class UpdateCheckpointDto {
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  city: string;
+  city?: string;
 
   @IsOptional()
   @IsNumber()
-  latitude: number;
+  latitude?: number;
 
   @IsOptional()
   @IsNumber()
-  longitude: number;
+  longitude?: number;
 
   @IsEnum(CheckpointStatus)
   @IsOptional()
-  status: CheckpointStatus;
+  status?: CheckpointStatus;
 }

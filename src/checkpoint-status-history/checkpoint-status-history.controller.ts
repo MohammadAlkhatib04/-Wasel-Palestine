@@ -1,15 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { CheckpointStatusHistoryService } from './checkpoint-status-history.service';
 import { CreateCheckpointStatusHistoryDto } from './dto/create-checkpoint-status-history.dto';
-import { UpdateCheckpointStatusHistoryDto } from './dto/update-checkpoint-status-history.dto';
+import { UpdateCheckpointStatusDto } from './dto/update-checkpoint-status-history.dto';
 
 @Controller('checkpoint-status-history')
 export class CheckpointStatusHistoryController {
-  constructor(private readonly checkpointStatusHistoryService: CheckpointStatusHistoryService) {}
+  constructor(
+    private readonly checkpointStatusHistoryService: CheckpointStatusHistoryService,
+  ) {}
 
   @Post()
-  create(@Body() createCheckpointStatusHistoryDto: CreateCheckpointStatusHistoryDto) {
-    return this.checkpointStatusHistoryService.create(createCheckpointStatusHistoryDto);
+  create(
+    @Body() createCheckpointStatusHistoryDto: CreateCheckpointStatusHistoryDto,
+  ) {
+    return this.checkpointStatusHistoryService.create(
+      createCheckpointStatusHistoryDto,
+    );
   }
 
   @Get()
@@ -23,8 +37,14 @@ export class CheckpointStatusHistoryController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCheckpointStatusHistoryDto: UpdateCheckpointStatusHistoryDto) {
-    return this.checkpointStatusHistoryService.update(+id, updateCheckpointStatusHistoryDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateCheckpointStatusHistoryDto: UpdateCheckpointStatusDto,
+  ) {
+    return this.checkpointStatusHistoryService.update(
+      +id,
+      updateCheckpointStatusHistoryDto,
+    );
   }
 
   @Delete(':id')

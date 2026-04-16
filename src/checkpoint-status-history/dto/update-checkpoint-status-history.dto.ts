@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateCheckpointStatusHistoryDto } from './create-checkpoint-status-history.dto';
+import { IsEnum } from 'class-validator';
+import { CheckpointStatus } from 'src/checkpoint/enums/checkpoint-status.enum';
 
-export class UpdateCheckpointStatusHistoryDto extends PartialType(CreateCheckpointStatusHistoryDto) {}
+export class UpdateCheckpointStatusDto {
+  @IsEnum(CheckpointStatus)
+  newStatus!: CheckpointStatus;
+}

@@ -16,6 +16,7 @@ import { FindCheckpointDto } from './dto/find-checkpoint.dto';
 import { UpdateCheckpointDto } from './dto/update-checkpoint.dto';
 import { JWTPayloadType } from 'src/utils/types';
 import { UserService } from 'src/user/user.service';
+import { CheckpointStatusHistory } from 'src/checkpoint-status-history/entities/checkpoint-status-history.entity';
 
 @Injectable()
 export class CheckpointService {
@@ -27,6 +28,8 @@ export class CheckpointService {
     private searchByName: SearchByNameStrategy,
     private searchByCityStatus: SearchByCityStatusStrategy,
     private userService: UserService,
+    @InjectRepository(CheckpointStatusHistory)
+    private readonly historyRepository: Repository<CheckpointStatusHistory>,
   ) {}
   public async createCheckpoint(
     createCheckpointDto: CreateCheckpointDto,
@@ -66,28 +69,27 @@ export class CheckpointService {
     return this.checkpointRepository.findOne({ where: { name } });
   }
 
-  public async update(
-    findDto: FindCheckpointDto,
-    updateDto: UpdateCheckpointDto,
-  ) {
-    const { id, name } = findDto;
+  //   public async update(
+  // p0: number, findDto: FindCheckpointDto, updateDto: UpdateCheckpointDto,
+  //   ) {
+  //     const { id, name } = findDto;
 
-    if (!id && !name) {
-      throw new BadRequestException('You must provide id or name');
-    }
+  //     if (!id && !name) {
+  //       throw new BadRequestException('You must provide id or name');
+  //     }
 
-    const checkpoint = await this.checkpointRepository.findOne({
-      where: id ? { id } : { name },
-    });
+  //     const checkpoint = await this.checkpointRepository.findOne({
+  //       where: id ? { id } : { name },
+  //     });
 
-    if (!checkpoint) {
-      throw new NotFoundException('Checkpoint not found');
-    }
+  //     if (!checkpoint) {
+  //       throw new NotFoundException('Checkpoint not found');
+  //     }
 
-    Object.assign(checkpoint, updateDto);
+  //     Object.assign(checkpoint, updateDto);
 
-    return this.checkpointRepository.save(checkpoint);
-  }
+  //     return this.checkpointRepository.save(checkpoint);
+  //   }
 
   public async remove(findDto: FindCheckpointDto) {
     try {
@@ -111,5 +113,59 @@ export class CheckpointService {
     } catch (err) {
       throw new Error('Somthing went wrong\n' + err);
     }
+  }
+  public async update(
+    id: number,
+    updateDto: UpdateCheckpointDto,
+    userPayLoad: JWTPayloadType,
+  ) {
+    const user = await this.userService.getCurrentUser(userPayLoad.id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return this.checkpointRepository.manager.transaction(async (manager) => {
+      const checkpointRepo = manager.getRepository(Checkpoint);
+      const historyRepo = manager.getRepository(CheckpointStatusHistory);
+
+      const checkpoint = await checkpointRepo.findOne({
+        where: { id },
+      });
+
+      if (!checkpoint) {
+        throw new NotFoundException(`Checkpoint with id ${id} not found`);
+      }
+
+      const previousStatus = checkpoint.status;
+      const statusChanged =
+        updateDto.status !== undefined &&
+        updateDto.status !== checkpoint.status;
+
+      if (updateDto.name !== undefined) checkpoint.name = updateDto.name;
+      if (updateDto.city !== undefined) checkpoint.city = updateDto.city;
+      if (updateDto.latitude !== undefined)
+        checkpoint.latitude = updateDto.latitude;
+      if (updateDto.longitude !== undefined)
+        checkpoint.longitude = updateDto.longitude;
+      if (updateDto.status !== undefined) checkpoint.status = updateDto.status;
+
+      const updatedCheckpoint = await checkpointRepo.save(checkpoint);
+
+      if (statusChanged) {
+        const history = historyRepo.create({
+          previousStatus,
+          newStatus: updatedCheckpoint.status,
+          checkpoint: updatedCheckpoint,
+          changedBy: user,
+        });
+
+        await historyRepo.save(history);
+      }
+
+      return {
+        message: 'Checkpoint updated successfully',
+        data: updatedCheckpoint,
+      };
+    });
   }
 }
