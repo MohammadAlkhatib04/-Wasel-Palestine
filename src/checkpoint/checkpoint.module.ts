@@ -8,6 +8,7 @@ import { SearchByCityStatusStrategy } from './strategies/search-by-city-status.s
 import { SearchByCityStrategy } from './strategies/search-by-city.strategy';
 import { SearchByNameStrategy } from './strategies/search-by-name.strategy';
 import { UserModule } from 'src/user/user.module';
+import { CheckpointStatusHistory } from 'src/checkpoint-status-history/entities/checkpoint-status-history.entity';
 
 @Module({
   controllers: [CheckpointController],
@@ -18,6 +19,9 @@ import { UserModule } from 'src/user/user.module';
     SearchByNameStrategy,
     SearchByCityStatusStrategy,
   ],
-  imports: [TypeOrmModule.forFeature([Checkpoint]), UserModule],
+  imports: [
+    TypeOrmModule.forFeature([Checkpoint, CheckpointStatusHistory]),
+    UserModule,
+  ],
 })
 export class CheckpointModule {}

@@ -4,8 +4,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { CheckpointModule } from './checkpoint/checkpoint.module';
-import { ReportModule } from './report/report.module'; // 🔥 أضفناه
+import { ReportModule } from './report/report.module';
 import { AppService } from './app.service';
+import { CheckpointStatusHistoryModule } from './checkpoint-status-history/checkpoint-status-history.module';
+import { IncidentModule } from './incident/incident.module';
 
 @Module({
   imports: [
@@ -30,7 +32,9 @@ import { AppService } from './app.service';
 
     UserModule,
     CheckpointModule,
-    ReportModule, // 🔥 هذا أهم سطر
+    CheckpointStatusHistoryModule,
+    IncidentModule,
+    ReportModule,
   ],
 
   controllers: [AppController],

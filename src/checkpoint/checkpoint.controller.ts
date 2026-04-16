@@ -9,6 +9,7 @@ import {
   Patch,
   UseGuards,
   Req,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CheckpointService } from './checkpoint.service';
 import { CreateCheckpointDto } from './dto/create-checkpoint.dto';
@@ -53,19 +54,21 @@ export class CheckpointController {
     return this.checkpointService.findOne(name);
   }
 
-  @Patch()
-  @Roles(UserType.ADMIN)
-  @UseGuards(AuthRolesGuard)
-  update(
-    @Body() updateDto: UpdateCheckpointDto,
-    @Query() findDto: FindCheckpointDto,
-  ) {
-    return this.checkpointService.update(findDto, updateDto);
-  }
   @Delete()
   @Roles(UserType.ADMIN)
   @UseGuards(AuthRolesGuard)
   remove(@Query() query: FindCheckpointDto) {
     return this.checkpointService.remove(query);
+  }
+
+  @Patch(':id')
+  @Roles(UserType.ADMIN, UserType.MODERATOR)
+  @UseGuards(AuthRolesGuard)
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDto: UpdateCheckpointDto,
+    @Req() req,
+  ) {
+    return this.checkpointService.update(+id, updateDto, req.user);
   }
 }
