@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { IncidentService } from './incident.service';
 import { IncidentController } from './incident.controller';
-import { UserModule } from 'src/user/user.module';
 import { Incident } from './entities/incident.entity';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Checkpoint } from 'src/checkpoint/entities/checkpoint.entity';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Incident]), UserModule],
+  imports: [TypeOrmModule.forFeature([Incident, Checkpoint]), UserModule],
   controllers: [IncidentController],
   providers: [IncidentService],
 })
