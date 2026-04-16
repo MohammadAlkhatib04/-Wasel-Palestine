@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { CheckpointModule } from './checkpoint/checkpoint.module';
 import { AppService } from './app.service';
 import { CheckpointStatusHistoryModule } from './checkpoint-status-history/checkpoint-status-history.module';
+import { IncidentModule } from './incident/incident.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { CheckpointStatusHistoryModule } from './checkpoint-status-history/check
     UserModule,
     CheckpointModule,
     CheckpointStatusHistoryModule,
+    IncidentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

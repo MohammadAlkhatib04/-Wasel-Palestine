@@ -63,6 +63,7 @@ import {
 import { CheckpointStatus } from '../enums/checkpoint-status.enum';
 import { User } from 'src/user/entities/user.entity';
 import { CheckpointStatusHistory } from 'src/checkpoint-status-history/entities/checkpoint-status-history.entity';
+import { Incident } from 'src/incident/entities/incident.entity';
 
 @Entity('checkpoints')
 export class Checkpoint {
@@ -112,4 +113,6 @@ export class Checkpoint {
     (checkpointStatusHistory) => checkpointStatusHistory.checkpoint,
   )
   statusHistory!: CheckpointStatusHistory[];
+  @OneToMany(() => Incident, (incident) => incident.checkpoint)
+  incidents!: Incident[];
 }

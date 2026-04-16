@@ -10,6 +10,7 @@ import { UserType } from 'src/utils/user.type';
 import { CURRENT_TIMESTAMP } from '../../utils/constants';
 import { Checkpoint } from 'src/checkpoint/entities/checkpoint.entity';
 import { CheckpointStatusHistory } from 'src/checkpoint-status-history/entities/checkpoint-status-history.entity';
+import { Incident } from 'src/incident/entities/incident.entity';
 
 @Entity('users')
 export class User {
@@ -52,4 +53,13 @@ export class User {
     (checkpointStatusHistory) => checkpointStatusHistory.changedBy,
   )
   checkpointStatusHistories!: CheckpointStatusHistory[];
+
+  @OneToMany(() => Incident, (incident) => incident.createdBy)
+  createdIncidents!: Incident[];
+
+  @OneToMany(() => Incident, (incident) => incident.verifiedBy)
+  verifiedIncidents!: Incident[];
+
+  @OneToMany(() => Incident, (incident) => incident.closedBy)
+  closedIncidents!: Incident[];
 }

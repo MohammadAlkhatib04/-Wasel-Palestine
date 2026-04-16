@@ -54,12 +54,6 @@ export class CheckpointController {
     return this.checkpointService.findOne(name);
   }
 
-  // @Patch()
-  // @Roles(UserType.ADMIN)
-  // @UseGuards(AuthRolesGuard)
-  // update(@Body() updateDto: UpdateCheckpointDto, @Param('id') id: number) {
-  //   return this.checkpointService.update(+id, updateDto);
-  // }
   @Delete()
   @Roles(UserType.ADMIN)
   @UseGuards(AuthRolesGuard)
