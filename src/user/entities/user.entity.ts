@@ -9,14 +9,10 @@ import {
 import { UserType } from 'src/utils/user.type';
 import { CURRENT_TIMESTAMP } from '../../utils/constants';
 import { Checkpoint } from 'src/checkpoint/entities/checkpoint.entity';
-<<<<<<< HEAD
-=======
 import { CheckpointStatusHistory } from 'src/checkpoint-status-history/entities/checkpoint-status-history.entity';
-import { Incident } from 'src/incident/entities/incident.entity';
-
->>>>>>> dbcad1a03de2c4e025e6f6375f8961eaae214a7e
 import { Report } from '../../report/entities/report.entity';
-
+import { AlertSubscription } from '../../alert-subscription/entities/alert-subscription.entity';
+import { Incident } from 'src/incident/entities/incident.entity';
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
@@ -51,14 +47,7 @@ export class User {
   updatedAt!: Date;
 
   @OneToMany(() => Checkpoint, (checkpoint) => checkpoint.createdBy)
-<<<<<<< HEAD
-  checkpoints: Checkpoint[];
-
-  @OneToMany(() => Report, (report) => report.user)
-  reports: Report[];
-}
-=======
-  checkpoints!: Checkpoint[];
+  checkpoints?: Checkpoint[];
 
   @OneToMany(
     () => CheckpointStatusHistory,
@@ -66,15 +55,20 @@ export class User {
   )
   checkpointStatusHistories!: CheckpointStatusHistory[];
 
-  @OneToMany(() => Incident, (incident) => incident.createdBy)
-  createdIncidents!: Incident[];
-
-  @OneToMany(() => Incident, (incident) => incident.verifiedBy)
-  verifiedIncidents!: Incident[];
-
-  @OneToMany(() => Incident, (incident) => incident.closedBy)
-  closedIncidents!: Incident[];
   @OneToMany(() => Report, (report) => report.user)
   reports?: Report[];
+
+  @OneToMany(
+    () => AlertSubscription,
+    (alertSubscription) => alertSubscription.user,
+  )
+  alertSubscriptions!: AlertSubscription[];
+  @OneToMany(() => Incident, (incident) => incident.createdBy)
+createdIncidents!: Incident[];
+
+@OneToMany(() => Incident, (incident) => incident.verifiedBy)
+verifiedIncidents!: Incident[];
+
+@OneToMany(() => Incident, (incident) => incident.closedBy)
+closedIncidents!: Incident[];
 }
->>>>>>> dbcad1a03de2c4e025e6f6375f8961eaae214a7e
