@@ -1,4 +1,5 @@
 import { IsString, IsOptional, IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class ReportDto {
   @IsString()
@@ -8,8 +9,12 @@ export class ReportDto {
   description!: string;
 
   @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
   latitude?: number;
 
   @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
   longitude?: number;
 }

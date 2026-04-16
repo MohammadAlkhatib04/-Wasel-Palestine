@@ -9,7 +9,6 @@ import {
 import { UserType } from 'src/utils/user.type';
 import { CURRENT_TIMESTAMP } from '../../utils/constants';
 import { Checkpoint } from 'src/checkpoint/entities/checkpoint.entity';
-
 import { Report } from '../../report/entities/report.entity';
 
 @Entity('users')
@@ -47,6 +46,7 @@ export class User {
 
   @OneToMany(() => Checkpoint, (checkpoint) => checkpoint.createdBy)
   checkpoints: Checkpoint[];
+
   @OneToMany(() => Report, (report) => report.user)
-reports: Report[];
+  reports: Report[];
 }

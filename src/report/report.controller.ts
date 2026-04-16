@@ -1,14 +1,28 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  ParseIntPipe,
+  UseGuards,
+} from '@nestjs/common';
 import { ReportService } from './report.service';
 import { ReportDto } from './dto/report.dto';
-
+import { VoteDto } from './dto/vote.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../user/decorator/current-user.decorator';
 @Controller('reports')
 export class ReportController {
   constructor(private readonly reportService: ReportService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() dto: ReportDto) {
-    return this.reportService.create(dto);
+  create(
+    @Body() dto: ReportDto,
+    @CurrentUser('id') userId: number,
+  ) {
+    return this.reportService.create(dto, userId);
   }
 
   @Get()
@@ -16,10 +30,18 @@ export class ReportController {
     return this.reportService.findAll();
   }
 
-  // 🔥 Voting endpoint
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.reportService.findOne(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post(':id/vote')
-  vote(@Param('id') id: string) {
-    const userId = 1; // مؤقت
-    return this.reportService.vote(Number(id), userId);
+  vote(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: VoteDto,
+    @CurrentUser('id') userId: number,
+  ) {
+    return this.reportService.vote(id, userId, dto.vote_type);
   }
 }
