@@ -8,7 +8,7 @@ import { ReportModule } from './report/report.module';
 import { AppService } from './app.service';
 import { CheckpointStatusHistoryModule } from './checkpoint-status-history/checkpoint-status-history.module';
 import { IncidentModule } from './incident/incident.module';
-
+import { AlertSubscriptionModule } from './alert-subscription/alert-subscription.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -35,6 +35,7 @@ import { IncidentModule } from './incident/incident.module';
     CheckpointStatusHistoryModule,
     IncidentModule,
     ReportModule,
+    AlertSubscriptionModule,
   ],
 
   controllers: [AppController],
