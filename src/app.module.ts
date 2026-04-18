@@ -10,6 +10,8 @@ import { CheckpointStatusHistoryModule } from './checkpoint-status-history/check
 import { IncidentModule } from './incident/incident.module';
 import { AlertSubscriptionModule } from './alert-subscription/alert-subscription.module';
 import { ReportVoteModule } from './report-vote/report-vote.module';
+import { ModerationLogModule } from './moderation-log/moderation-log.module';
+import { AlertRecordModule } from './alert-record/alert-record.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -38,6 +40,8 @@ import { ReportVoteModule } from './report-vote/report-vote.module';
     ReportModule,
     AlertSubscriptionModule,
     ReportVoteModule,
+    ModerationLogModule,
+    AlertRecordModule,
   ],
 
   controllers: [AppController],
