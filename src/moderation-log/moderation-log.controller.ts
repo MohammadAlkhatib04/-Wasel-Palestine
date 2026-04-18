@@ -1,29 +1,18 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ModerationLogService } from './moderation-log.service';
-import {
-  ModerationAction,
-  ModerationEntityType,
-} from './entities/moderation-log.entity';
+import { CreateModerationLogDto } from './dto/create-moderation-log.dto';
 
 @Controller('api/v1/moderation-logs')
 export class ModerationLogController {
   constructor(private readonly moderationLogService: ModerationLogService) {}
 
   @Post()
-  create(
-    @Body()
-    body: {
-      entity_type: ModerationEntityType;
-      entity_id: number;
-      moderator_id: number;
-      action: ModerationAction;
-      notes?: string;
-    },
-  ) {
-    return this.moderationLogService.create(body);
+  create(@Body() createModerationLogDto: CreateModerationLogDto) {
+    return this.moderationLogService.create(createModerationLogDto);
   }
+
   @Get()
-findAll() {
-  return this.moderationLogService.findAll();
-}
+  findAll() {
+    return this.moderationLogService.findAll();
+  }
 }

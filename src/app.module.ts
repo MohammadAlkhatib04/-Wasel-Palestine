@@ -12,6 +12,8 @@ import { AlertSubscriptionModule } from './alert-subscription/alert-subscription
 import { ReportVoteModule } from './report-vote/report-vote.module';
 import { ModerationLogModule } from './moderation-log/moderation-log.module';
 import { AlertRecordModule } from './alert-record/alert-record.module';
+import { RouteCacheModule } from './route-cache/route-cache.module';
+import { WeatherCacheModule } from './weather-cache/weather-cache.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -42,6 +44,8 @@ import { AlertRecordModule } from './alert-record/alert-record.module';
     ReportVoteModule,
     ModerationLogModule,
     AlertRecordModule,
+    RouteCacheModule,
+    WeatherCacheModule,
   ],
 
   controllers: [AppController],

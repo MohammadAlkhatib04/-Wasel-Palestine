@@ -1,7 +1,8 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ReportVote, VoteType } from './entities/report-vote.entity';
+import { ReportVote } from './entities/report-vote.entity';
+import { CreateReportVoteDto } from './dto/create-report-vote.dto';
 
 @Injectable()
 export class ReportVoteService {
@@ -10,15 +11,11 @@ export class ReportVoteService {
     private readonly reportVoteRepository: Repository<ReportVote>,
   ) {}
 
-  async create(data: {
-    report_id: number;
-    user_id: number;
-    vote_type: VoteType;
-  }) {
+  async create(createReportVoteDto: CreateReportVoteDto) {
     const existingVote = await this.reportVoteRepository.findOne({
       where: {
-        report_id: data.report_id,
-        user_id: data.user_id,
+        report_id: createReportVoteDto.report_id,
+        user_id: createReportVoteDto.user_id,
       },
     });
 
@@ -29,9 +26,9 @@ export class ReportVoteService {
     }
 
     const vote = this.reportVoteRepository.create({
-      report_id: data.report_id,
-      user_id: data.user_id,
-      vote_type: data.vote_type,
+      report_id: createReportVoteDto.report_id,
+      user_id: createReportVoteDto.user_id,
+      vote_type: createReportVoteDto.vote_type,
     });
 
     return await this.reportVoteRepository.save(vote);
@@ -44,14 +41,15 @@ export class ReportVoteService {
       },
     });
   }
+
   async findByReportId(reportId: number) {
-  return await this.reportVoteRepository.find({
-    where: {
-      report_id: reportId,
-    },
-    order: {
-      created_at: 'DESC',
-    },
-  });
-}
+    return await this.reportVoteRepository.find({
+      where: {
+        report_id: reportId,
+      },
+      order: {
+        created_at: 'DESC',
+      },
+    });
+  }
 }

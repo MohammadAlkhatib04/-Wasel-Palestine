@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import {
-  ModerationLog,
-  ModerationAction,
-  ModerationEntityType,
-} from './entities/moderation-log.entity';
+import { ModerationLog } from './entities/moderation-log.entity';
+import { CreateModerationLogDto } from './dto/create-moderation-log.dto';
 
 @Injectable()
 export class ModerationLogService {
@@ -14,28 +11,23 @@ export class ModerationLogService {
     private readonly moderationLogRepository: Repository<ModerationLog>,
   ) {}
 
-  async create(data: {
-    entity_type: ModerationEntityType;
-    entity_id: number;
-    moderator_id: number;
-    action: ModerationAction;
-    notes?: string;
-  }) {
+  async create(createModerationLogDto: CreateModerationLogDto) {
     const log = this.moderationLogRepository.create({
-      entity_type: data.entity_type,
-      entity_id: data.entity_id,
-      moderator_id: data.moderator_id,
-      action: data.action,
-      notes: data.notes,
+      entity_type: createModerationLogDto.entity_type,
+      entity_id: createModerationLogDto.entity_id,
+      moderator_id: createModerationLogDto.moderator_id,
+      action: createModerationLogDto.action,
+      notes: createModerationLogDto.notes,
     });
 
     return await this.moderationLogRepository.save(log);
   }
+
   async findAll() {
-  return await this.moderationLogRepository.find({
-    order: {
-      created_at: 'DESC',
-    },
-  });
-}
+    return await this.moderationLogRepository.find({
+      order: {
+        created_at: 'DESC',
+      },
+    });
+  }
 }

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AlertRecord, DeliveryStatus } from './entities/alert-record.entity';
+import { AlertRecord } from './entities/alert-record.entity';
+import { CreateAlertRecordDto } from './dto/create-alert-record.dto';
 
 @Injectable()
 export class AlertRecordService {
@@ -10,24 +11,21 @@ export class AlertRecordService {
     private readonly alertRecordRepository: Repository<AlertRecord>,
   ) {}
 
-  async create(data: {
-    subscription_id: number;
-    incident_id: number;
-    delivery_status: DeliveryStatus;
-  }) {
+  async create(createAlertRecordDto: CreateAlertRecordDto) {
     const record = this.alertRecordRepository.create({
-      subscription_id: data.subscription_id,
-      incident_id: data.incident_id,
-      delivery_status: data.delivery_status,
+      subscription_id: createAlertRecordDto.subscription_id,
+      incident_id: createAlertRecordDto.incident_id,
+      delivery_status: createAlertRecordDto.delivery_status,
     });
 
     return await this.alertRecordRepository.save(record);
   }
+
   async findAll() {
-  return await this.alertRecordRepository.find({
-    order: {
-      triggered_at: 'DESC',
-    },
-  });
-}
+    return await this.alertRecordRepository.find({
+      order: {
+        triggered_at: 'DESC',
+      },
+    });
+  }
 }

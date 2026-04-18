@@ -1,28 +1,23 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ReportVoteService } from './report-vote.service';
-import { VoteType } from './entities/report-vote.entity';
+import { CreateReportVoteDto } from './dto/create-report-vote.dto';
 
 @Controller('api/v1/report-votes')
 export class ReportVoteController {
   constructor(private readonly reportVoteService: ReportVoteService) {}
 
   @Post()
-  create(
-    @Body()
-    body: {
-      report_id: number;
-      user_id: number;
-      vote_type: VoteType;
-    },
-  ) {
-    return this.reportVoteService.create(body);
+  create(@Body() createReportVoteDto: CreateReportVoteDto) {
+    return this.reportVoteService.create(createReportVoteDto);
   }
+
   @Get()
-findAll() {
-  return this.reportVoteService.findAll();
-}
-@Get('report/:reportId')
-findByReportId(@Param('reportId') reportId: string) {
-  return this.reportVoteService.findByReportId(Number(reportId));
-}
+  findAll() {
+    return this.reportVoteService.findAll();
+  }
+
+  @Get('report/:reportId')
+  findByReportId(@Param('reportId') reportId: string) {
+    return this.reportVoteService.findByReportId(Number(reportId));
+  }
 }
