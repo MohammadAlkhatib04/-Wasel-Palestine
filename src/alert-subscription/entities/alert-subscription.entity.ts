@@ -5,8 +5,10 @@ import {
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
+import { AlertRecord } from '../../alert-record/entities/alert-record.entity';
 
 @Entity('alert_subscription')
 export class AlertSubscription {
@@ -34,6 +36,9 @@ export class AlertSubscription {
 
   @Column({ type: 'boolean', default: true })
   is_active!: boolean;
+
+  @OneToMany(() => AlertRecord, (alertRecord) => alertRecord.subscription)
+  alertRecords?: AlertRecord[];
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at!: Date;

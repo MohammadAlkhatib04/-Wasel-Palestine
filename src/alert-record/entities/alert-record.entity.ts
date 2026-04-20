@@ -3,7 +3,11 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { AlertSubscription } from '../../alert-subscription/entities/alert-subscription.entity';
+import { Incident } from '../../incident/entities/incident.entity';
 
 export enum DeliveryStatus {
   PENDING = 'pending',
@@ -16,8 +20,16 @@ export class AlertRecord {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @ManyToOne(() => AlertSubscription, { nullable: false, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'subscription_id' })
+  subscription!: AlertSubscription;
+
   @Column()
   subscription_id!: number;
+
+  @ManyToOne(() => Incident, { nullable: false, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'incident_id' })
+  incident!: Incident;
 
   @Column()
   incident_id!: number;
@@ -25,6 +37,7 @@ export class AlertRecord {
   @Column({
     type: 'enum',
     enum: DeliveryStatus,
+    default: DeliveryStatus.PENDING,
   })
   delivery_status!: DeliveryStatus;
 

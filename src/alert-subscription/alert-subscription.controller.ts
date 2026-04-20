@@ -14,6 +14,9 @@ import { CreateAlertSubscriptionDto } from './dto/create-alert-subscription.dto'
 import { UpdateAlertSubscriptionDto } from './dto/update-alert-subscription.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../user/decorator/current-user.decorator';
+import { Roles } from 'src/user/decorator/user-role.decorator';
+import { AuthRolesGuard } from 'src/user/guards/auth-roles.guard';
+import { UserType } from 'src/utils/user.type';
 
 @UseGuards(JwtAuthGuard)
 @Controller('alert-subscriptions')
@@ -33,6 +36,13 @@ export class AlertSubscriptionController {
   @Get('my')
   findMySubscriptions(@CurrentUser('id') userId: number) {
     return this.alertSubscriptionService.findMySubscriptions(userId);
+  }
+
+  @Get()
+  @Roles(UserType.ADMIN, UserType.MODERATOR)
+  @UseGuards(AuthRolesGuard)
+  findAll() {
+    return this.alertSubscriptionService.findAll();
   }
 
   @Get(':id')

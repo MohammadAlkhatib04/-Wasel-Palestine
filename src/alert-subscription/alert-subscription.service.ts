@@ -22,18 +22,48 @@ export class AlertSubscriptionService {
       center_latitude: dto.center_latitude,
       center_longitude: dto.center_longitude,
       radius_km: dto.radius_km,
-      category: dto.category,
+      category: dto.category.trim().toLowerCase(),
       is_active: dto.is_active ?? true,
     });
 
-    return await this.alertSubscriptionRepository.save(subscription);
+    const savedSubscription = await this.alertSubscriptionRepository.save(
+      subscription,
+    );
+
+    return {
+      message: 'Alert subscription created successfully',
+      data: savedSubscription,
+    };
+  }
+
+  async findAll() {
+    const data = await this.alertSubscriptionRepository.find({
+      relations: ['user'],
+      order: { created_at: 'DESC' },
+    });
+
+    return {
+      message:
+        data.length === 0
+          ? 'No alert subscriptions found'
+          : 'Alert subscriptions fetched successfully',
+      data,
+    };
   }
 
   async findMySubscriptions(userId: number) {
-    return await this.alertSubscriptionRepository.find({
+    const data = await this.alertSubscriptionRepository.find({
       where: { user_id: userId },
       order: { created_at: 'DESC' },
     });
+
+    return {
+      message:
+        data.length === 0
+          ? 'No alert subscriptions found'
+          : 'Your alert subscriptions fetched successfully',
+      data,
+    };
   }
 
   async findOne(id: number, userId: number) {
@@ -50,7 +80,10 @@ export class AlertSubscriptionService {
       throw new ForbiddenException('You can only access your own subscriptions');
     }
 
-    return subscription;
+    return {
+      message: 'Alert subscription fetched successfully',
+      data: subscription,
+    };
   }
 
   async update(id: number, dto: UpdateAlertSubscriptionDto, userId: number) {
@@ -66,9 +99,34 @@ export class AlertSubscriptionService {
       throw new ForbiddenException('You can only update your own subscriptions');
     }
 
-    Object.assign(subscription, dto);
+    if (dto.center_latitude !== undefined) {
+      subscription.center_latitude = dto.center_latitude;
+    }
 
-    return await this.alertSubscriptionRepository.save(subscription);
+    if (dto.center_longitude !== undefined) {
+      subscription.center_longitude = dto.center_longitude;
+    }
+
+    if (dto.radius_km !== undefined) {
+      subscription.radius_km = dto.radius_km;
+    }
+
+    if (dto.category !== undefined) {
+      subscription.category = dto.category.trim().toLowerCase();
+    }
+
+    if (dto.is_active !== undefined) {
+      subscription.is_active = dto.is_active;
+    }
+
+    const updatedSubscription = await this.alertSubscriptionRepository.save(
+      subscription,
+    );
+
+    return {
+      message: 'Alert subscription updated successfully',
+      data: updatedSubscription,
+    };
   }
 
   async toggle(id: number, userId: number) {
@@ -86,7 +144,14 @@ export class AlertSubscriptionService {
 
     subscription.is_active = !subscription.is_active;
 
-    return await this.alertSubscriptionRepository.save(subscription);
+    const updatedSubscription = await this.alertSubscriptionRepository.save(
+      subscription,
+    );
+
+    return {
+      message: `Alert subscription ${updatedSubscription.is_active ? 'activated' : 'deactivated'} successfully`,
+      data: updatedSubscription,
+    };
   }
 
   async remove(id: number, userId: number) {

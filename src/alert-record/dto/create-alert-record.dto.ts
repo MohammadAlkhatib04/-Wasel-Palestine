@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, Min } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, Min } from 'class-validator';
 import { DeliveryStatus } from '../entities/alert-record.entity';
 
 export class CreateAlertRecordDto {
@@ -10,6 +10,7 @@ export class CreateAlertRecordDto {
   @Min(1)
   incident_id!: number;
 
+  @IsOptional()
   @IsEnum(DeliveryStatus)
-  delivery_status!: DeliveryStatus;
+  delivery_status?: DeliveryStatus;
 }

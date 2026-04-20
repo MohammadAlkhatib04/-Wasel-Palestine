@@ -1,4 +1,12 @@
-import { IsBoolean, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
+import {
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+  IsNotEmpty,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateAlertSubscriptionDto {
@@ -20,6 +28,7 @@ export class CreateAlertSubscriptionDto {
   radius_km!: number;
 
   @IsString()
+  @IsNotEmpty()
   category!: string;
 
   @IsOptional()
