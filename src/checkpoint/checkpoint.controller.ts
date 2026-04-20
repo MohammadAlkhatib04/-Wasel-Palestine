@@ -23,6 +23,7 @@ import { UserType } from 'src/utils/user.type';
 @Controller('checkpoint')
 export class CheckpointController {
   constructor(private readonly checkpointService: CheckpointService) {}
+
   @Post()
   @Roles(UserType.ADMIN, UserType.MODERATOR)
   @UseGuards(AuthRolesGuard)
@@ -50,8 +51,8 @@ export class CheckpointController {
   @Get(':id')
   @Roles(UserType.ADMIN, UserType.CITIZEN, UserType.MODERATOR)
   @UseGuards(AuthRolesGuard)
-  findOne(@Param('name') name: string) {
-    return this.checkpointService.findOne(name);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.checkpointService.findOne(id);
   }
 
   @Delete()
@@ -69,6 +70,6 @@ export class CheckpointController {
     @Body() updateDto: UpdateCheckpointDto,
     @Req() req,
   ) {
-    return this.checkpointService.update(+id, updateDto, req.user);
+    return this.checkpointService.update(id, updateDto, req.user);
   }
 }

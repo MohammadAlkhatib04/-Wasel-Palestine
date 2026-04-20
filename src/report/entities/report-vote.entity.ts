@@ -7,11 +7,10 @@ import {
   Column,
   Unique,
 } from 'typeorm';
-
 import { Report } from './report.entity';
 import { User } from '../../user/entities/user.entity';
 
-@Entity('report_vote')
+@Entity('report_votes')
 @Unique(['report_id', 'user_id'])
 export class ReportVote {
   @PrimaryGeneratedColumn()
@@ -37,7 +36,7 @@ export class ReportVote {
   @Column()
   user_id!: number;
 
-  @Column()
+  @Column({ type: 'varchar', length: 10 })
   vote_type!: 'up' | 'down';
 
   @CreateDateColumn()

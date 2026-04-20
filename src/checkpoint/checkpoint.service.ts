@@ -31,6 +31,7 @@ export class CheckpointService {
     @InjectRepository(CheckpointStatusHistory)
     private readonly historyRepository: Repository<CheckpointStatusHistory>,
   ) {}
+
   public async createCheckpoint(
     createCheckpointDto: CreateCheckpointDto,
     userPayLoad: JWTPayloadType,
@@ -39,6 +40,7 @@ export class CheckpointService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
     const checkpoint = this.checkpointRepository.create({
       ...createCheckpointDto,
       createdBy: user,
@@ -59,39 +61,45 @@ export class CheckpointService {
     } else if (query.name) {
       this.context.setStrategy(this.searchByName);
     } else {
-      throw new Error('Invalid search params');
+      throw new BadRequestException('Invalid search params');
     }
 
     return this.context.execute(query);
   }
 
-  public async findOne(name: string) {
-    return this.checkpointRepository.findOne({ where: { name } });
+  public async findOne(id: number) {
+    const checkpoint = await this.checkpointRepository.findOne({
+      where: { id },
+      relations: ['createdBy'],
+    });
+
+    if (!checkpoint) {
+      throw new NotFoundException(`Checkpoint with id ${id} not found`);
+    }
+
+    return checkpoint;
   }
 
   public async remove(findDto: FindCheckpointDto) {
-    try {
-      const { id, name } = findDto;
+    const { id, name } = findDto;
 
-      if (!id && !name) {
-        throw new BadRequestException('You must provide id or name');
-      }
-
-      const checkpoint = await this.checkpointRepository.findOne({
-        where: id ? { id } : { name },
-      });
-
-      if (!checkpoint) {
-        throw new NotFoundException('Checkpoint not found');
-      }
-
-      await this.checkpointRepository.remove(checkpoint);
-
-      return { message: 'Checkpoint deleted successfully' };
-    } catch (err) {
-      throw new Error('Somthing went wrong\n' + err);
+    if (!id && !name) {
+      throw new BadRequestException('You must provide id or name');
     }
+
+    const checkpoint = await this.checkpointRepository.findOne({
+      where: id ? { id } : { name },
+    });
+
+    if (!checkpoint) {
+      throw new NotFoundException('Checkpoint not found');
+    }
+
+    await this.checkpointRepository.remove(checkpoint);
+
+    return { message: 'Checkpoint deleted successfully' };
   }
+
   public async update(
     id: number,
     updateDto: UpdateCheckpointDto,

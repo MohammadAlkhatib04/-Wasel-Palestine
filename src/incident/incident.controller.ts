@@ -29,10 +29,6 @@ export class IncidentController {
     return this.incidentService.create(createIncidentDto, req.user);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.incidentService.findAll();
-  // }
   @Get()
   @Roles(UserType.ADMIN, UserType.MODERATOR)
   @UseGuards(AuthRolesGuard)

@@ -30,7 +30,7 @@ export class ReportService {
       },
     });
 
-    let duplicateId: number | undefined = undefined;
+    let duplicateId: number | null = null;
 
     if (
       existingReport &&
@@ -57,10 +57,17 @@ export class ReportService {
       description: dto.description,
       latitude: dto.latitude,
       longitude: dto.longitude,
-      duplicate_of_id: duplicateId,
+      duplicate_of_id: duplicateId ?? undefined,
     });
 
-    return await this.reportRepository.save(report);
+    const savedReport = await this.reportRepository.save(report);
+
+    return {
+      message: duplicateId
+        ? 'Report submitted successfully and marked as duplicate'
+        : 'Report submitted successfully',
+      data: savedReport,
+    };
   }
 
   async findAll() {
@@ -93,7 +100,10 @@ export class ReportService {
     }
 
     const existingVote = await this.voteRepository.findOne({
-      where: { report_id: reportId, user_id: userId },
+      where: {
+        report_id: reportId,
+        user_id: userId,
+      },
     });
 
     if (existingVote) {
@@ -108,15 +118,17 @@ export class ReportService {
 
     await this.voteRepository.save(vote);
 
-    await this.reportRepository.increment(
-      { id: reportId },
-      'confidence_score',
-      voteType === 'up' ? 1 : -1,
-    );
+    report.confidence_score += voteType === 'up' ? 1 : -1;
+    await this.reportRepository.save(report);
 
     return {
       message: 'Vote added successfully',
-      vote_type: voteType,
+      data: {
+        report_id: reportId,
+        user_id: userId,
+        vote_type: voteType,
+        new_confidence_score: report.confidence_score,
+      },
     };
   }
 }

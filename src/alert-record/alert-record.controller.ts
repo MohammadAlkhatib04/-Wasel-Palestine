@@ -1,8 +1,13 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AlertRecordService } from './alert-record.service';
 import { CreateAlertRecordDto } from './dto/create-alert-record.dto';
+import { Roles } from 'src/user/decorator/user-role.decorator';
+import { AuthRolesGuard } from 'src/user/guards/auth-roles.guard';
+import { UserType } from 'src/utils/user.type';
 
-@Controller('api/v1/alert-records')
+@Controller('alert-records')
+@Roles(UserType.ADMIN, UserType.MODERATOR, UserType.CITIZEN)
+@UseGuards(AuthRolesGuard)
 export class AlertRecordController {
   constructor(private readonly alertRecordService: AlertRecordService) {}
 

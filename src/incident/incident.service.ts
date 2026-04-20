@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { SearchIncidentDto } from './dto/search-incident.dto';
 import { Incident } from './entities/incident.entity';
 import { CreateIncidentDto } from './dto/create-incident.dto';
@@ -13,6 +13,16 @@ import { UserService } from 'src/user/user.service';
 import { JWTPayloadType } from 'src/utils/types';
 import { Checkpoint } from 'src/checkpoint/entities/checkpoint.entity';
 import { IncidentStatus } from './enums/incident-status.enum';
+import {
+  ModerationAction,
+  ModerationEntityType,
+  ModerationLog,
+} from 'src/moderation-log/entities/moderation-log.entity';
+import {
+  AlertRecord,
+  DeliveryStatus,
+} from 'src/alert-record/entities/alert-record.entity';
+import { AlertSubscription } from 'src/alert-subscription/entities/alert-subscription.entity';
 
 @Injectable()
 export class IncidentService {
@@ -22,6 +32,15 @@ export class IncidentService {
 
     @InjectRepository(Checkpoint)
     private readonly checkpointRepository: Repository<Checkpoint>,
+
+    @InjectRepository(ModerationLog)
+    private readonly moderationLogRepository: Repository<ModerationLog>,
+
+    @InjectRepository(AlertRecord)
+    private readonly alertRecordRepository: Repository<AlertRecord>,
+
+    @InjectRepository(AlertSubscription)
+    private readonly alertSubscriptionRepository: Repository<AlertSubscription>,
 
     private readonly userService: UserService,
   ) {}
@@ -68,12 +87,6 @@ export class IncidentService {
     };
   }
 
-  // async findAll() {
-  //   return this.incidentRepository.find({
-  //     order: { createdAt: 'DESC' },
-  //   });
-  // }
-
   async findAll(searchDto: SearchIncidentDto) {
     const {
       type,
@@ -90,11 +103,8 @@ export class IncidentService {
 
     const query = this.incidentRepository.createQueryBuilder('incident');
 
-    // 🔵 Relations (optional)
     query.leftJoinAndSelect('incident.createdBy', 'createdBy');
     query.leftJoinAndSelect('incident.checkpoint', 'checkpoint');
-
-    // 🔵 Filtering
 
     if (type) {
       query.andWhere('incident.type = :type', { type });
@@ -123,7 +133,6 @@ export class IncidentService {
     query.orderBy(`incident.${sortBy}`, sortOrder);
 
     const skip = (page - 1) * limit;
-
     query.skip(skip).take(limit);
 
     const [data, total] = await query.getManyAndCount();
@@ -144,6 +153,7 @@ export class IncidentService {
   async findOne(id: number) {
     const incident = await this.incidentRepository.findOne({
       where: { id },
+      relations: ['createdBy', 'verifiedBy', 'closedBy', 'checkpoint'],
     });
 
     if (!incident) {
@@ -211,6 +221,7 @@ export class IncidentService {
 
     const incident = await this.incidentRepository.findOne({
       where: { id },
+      relations: ['checkpoint'],
     });
 
     if (!incident) {
@@ -231,9 +242,50 @@ export class IncidentService {
 
     const updatedIncident = await this.incidentRepository.save(incident);
 
+    await this.moderationLogRepository.save(
+      this.moderationLogRepository.create({
+        entity_type: ModerationEntityType.INCIDENT,
+        entity_id: updatedIncident.id,
+        moderator_id: user.id,
+        action: ModerationAction.VERIFY,
+        notes: `Incident #${updatedIncident.id} verified successfully`,
+      }),
+    );
+
+    const activeSubscriptions = await this.alertSubscriptionRepository.find({
+      where: {
+        is_active: true,
+        category: In([String(updatedIncident.type), 'all']),
+      },
+    });
+
+    const matchedSubscriptions = activeSubscriptions.filter((subscription) => {
+      const distanceKm = this.calculateDistanceKm(
+        Number(updatedIncident.latitude),
+        Number(updatedIncident.longitude),
+        Number(subscription.center_latitude),
+        Number(subscription.center_longitude),
+      );
+
+      return distanceKm <= Number(subscription.radius_km);
+    });
+
+    if (matchedSubscriptions.length > 0) {
+      const alertRecords = matchedSubscriptions.map((subscription) =>
+        this.alertRecordRepository.create({
+          subscription_id: Number(subscription.id),
+          incident_id: updatedIncident.id,
+          delivery_status: DeliveryStatus.PENDING,
+        }),
+      );
+
+      await this.alertRecordRepository.save(alertRecords);
+    }
+
     return {
       message: 'Incident verified successfully',
       data: updatedIncident,
+      alertsTriggered: matchedSubscriptions.length,
     };
   }
 
@@ -261,9 +313,42 @@ export class IncidentService {
 
     const updatedIncident = await this.incidentRepository.save(incident);
 
+    await this.moderationLogRepository.save(
+      this.moderationLogRepository.create({
+        entity_type: ModerationEntityType.INCIDENT,
+        entity_id: updatedIncident.id,
+        moderator_id: user.id,
+        action: ModerationAction.CLOSE,
+        notes: `Incident #${updatedIncident.id} closed successfully`,
+      }),
+    );
+
     return {
       message: 'Incident closed successfully',
       data: updatedIncident,
     };
+  }
+
+  private calculateDistanceKm(
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number,
+  ): number {
+    const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
+    const earthRadiusKm = 6371;
+
+    const dLat = toRadians(lat2 - lat1);
+    const dLon = toRadians(lon2 - lon1);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRadians(lat1)) *
+        Math.cos(toRadians(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return earthRadiusKm * c;
   }
 }

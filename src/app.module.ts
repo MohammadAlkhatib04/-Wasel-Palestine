@@ -9,7 +9,6 @@ import { AppService } from './app.service';
 import { CheckpointStatusHistoryModule } from './checkpoint-status-history/checkpoint-status-history.module';
 import { IncidentModule } from './incident/incident.module';
 import { AlertSubscriptionModule } from './alert-subscription/alert-subscription.module';
-import { ReportVoteModule } from './report-vote/report-vote.module';
 import { ModerationLogModule } from './moderation-log/moderation-log.module';
 import { AlertRecordModule } from './alert-record/alert-record.module';
 import { RouteCacheModule } from './route-cache/route-cache.module';
@@ -41,7 +40,6 @@ import { WeatherCacheModule } from './weather-cache/weather-cache.module';
     IncidentModule,
     ReportModule,
     AlertSubscriptionModule,
-    ReportVoteModule,
     ModerationLogModule,
     AlertRecordModule,
     RouteCacheModule,

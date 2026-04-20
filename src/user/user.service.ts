@@ -60,7 +60,7 @@ export class UserService {
     const { email, password } = loginUserDto;
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException('Invalid email');
     }
     if (!(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Invalid password');

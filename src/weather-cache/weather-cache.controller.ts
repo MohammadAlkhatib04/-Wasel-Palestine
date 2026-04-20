@@ -1,9 +1,23 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { WeatherCacheService } from './weather-cache.service';
 import { CreateWeatherCacheDto } from './dto/create-weather-cache.dto';
 import { UpdateWeatherCacheDto } from './dto/update-weather-cache.dto';
+import { Roles } from 'src/user/decorator/user-role.decorator';
+import { AuthRolesGuard } from 'src/user/guards/auth-roles.guard';
+import { UserType } from 'src/utils/user.type';
 
-@Controller('api/v1/weather-cache')
+@Controller('weather-cache')
+@Roles(UserType.ADMIN, UserType.MODERATOR)
+@UseGuards(AuthRolesGuard)
 export class WeatherCacheController {
   constructor(private readonly weatherCacheService: WeatherCacheService) {}
 
@@ -19,9 +33,9 @@ export class WeatherCacheController {
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateWeatherCacheDto: UpdateWeatherCacheDto,
   ) {
-    return this.weatherCacheService.update(Number(id), updateWeatherCacheDto);
+    return this.weatherCacheService.update(id, updateWeatherCacheDto);
   }
 }
