@@ -64,11 +64,11 @@ export class User {
   )
   alertSubscriptions!: AlertSubscription[];
   @OneToMany(() => Incident, (incident) => incident.createdBy)
-createdIncidents!: Incident[];
+  createdIncidents!: Incident[];
 
-@OneToMany(() => Incident, (incident) => incident.verifiedBy)
-verifiedIncidents!: Incident[];
+  @OneToMany(() => Incident, (incident) => incident.verifiedBy)
+  verifiedIncidents!: Incident[];
 
-@OneToMany(() => Incident, (incident) => incident.closedBy)
-closedIncidents!: Incident[];
+  @OneToMany(() => Incident, (incident) => incident.closedBy)
+  closedIncidents!: Incident[];
 }

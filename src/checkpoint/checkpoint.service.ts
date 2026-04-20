@@ -69,28 +69,6 @@ export class CheckpointService {
     return this.checkpointRepository.findOne({ where: { name } });
   }
 
-  //   public async update(
-  // p0: number, findDto: FindCheckpointDto, updateDto: UpdateCheckpointDto,
-  //   ) {
-  //     const { id, name } = findDto;
-
-  //     if (!id && !name) {
-  //       throw new BadRequestException('You must provide id or name');
-  //     }
-
-  //     const checkpoint = await this.checkpointRepository.findOne({
-  //       where: id ? { id } : { name },
-  //     });
-
-  //     if (!checkpoint) {
-  //       throw new NotFoundException('Checkpoint not found');
-  //     }
-
-  //     Object.assign(checkpoint, updateDto);
-
-  //     return this.checkpointRepository.save(checkpoint);
-  //   }
-
   public async remove(findDto: FindCheckpointDto) {
     try {
       const { id, name } = findDto;
