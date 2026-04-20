@@ -17,7 +17,7 @@ import { SearchCheckpointDto } from './dto/search-checkpoint.dto';
 import { FindCheckpointDto } from './dto/find-checkpoint.dto';
 import { UpdateCheckpointDto } from './dto/update-checkpoint.dto';
 import { Roles } from 'src/user/decorator/user-role.decorator';
-import { AuthRolesGuard } from 'src/user/guards/auth-roles.guard';
+import { AuthRolesGuard } from 'src/auth/guards/auth-roles.guard';
 import { UserType } from 'src/utils/user.type';
 
 @Controller('checkpoint')

@@ -14,7 +14,7 @@ import { IncidentService } from './incident.service';
 import { CreateIncidentDto } from './dto/create-incident.dto';
 import { UpdateIncidentDto } from './dto/update-incident.dto';
 import { Roles } from 'src/user/decorator/user-role.decorator';
-import { AuthRolesGuard } from 'src/user/guards/auth-roles.guard';
+import { AuthRolesGuard } from 'src/auth/guards/auth-roles.guard';
 import { UserType } from 'src/utils/user.type';
 import { SearchIncidentDto } from './dto/search-incident.dto';
 

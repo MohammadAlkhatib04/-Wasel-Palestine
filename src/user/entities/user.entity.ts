@@ -13,6 +13,7 @@ import { CheckpointStatusHistory } from 'src/checkpoint-status-history/entities/
 import { Report } from '../../report/entities/report.entity';
 import { AlertSubscription } from '../../alert-subscription/entities/alert-subscription.entity';
 import { Incident } from 'src/incident/entities/incident.entity';
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
@@ -24,8 +25,8 @@ export class User {
   @Column({ type: 'varchar', unique: true })
   email!: string;
 
-  @Column({ type: 'varchar' })
-  password!: string;
+  @Column({ type: 'varchar', select: false })
+  password?: string;
 
   @Column({ type: 'varchar', nullable: true, unique: true })
   phone!: string | null;
@@ -35,6 +36,9 @@ export class User {
 
   @Column({ type: 'boolean', default: true })
   isActive!: boolean;
+
+  @Column({ type: 'varchar', nullable: true, select: false })
+  refreshTokenHash?: string | null;
 
   @CreateDateColumn({ type: 'timestamp', default: () => CURRENT_TIMESTAMP })
   createdAt!: Date;
@@ -63,6 +67,7 @@ export class User {
     (alertSubscription) => alertSubscription.user,
   )
   alertSubscriptions!: AlertSubscription[];
+
   @OneToMany(() => Incident, (incident) => incident.createdBy)
   createdIncidents!: Incident[];
 

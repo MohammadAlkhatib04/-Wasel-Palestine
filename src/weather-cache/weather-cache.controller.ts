@@ -12,7 +12,7 @@ import { WeatherCacheService } from './weather-cache.service';
 import { CreateWeatherCacheDto } from './dto/create-weather-cache.dto';
 import { UpdateWeatherCacheDto } from './dto/update-weather-cache.dto';
 import { Roles } from 'src/user/decorator/user-role.decorator';
-import { AuthRolesGuard } from 'src/user/guards/auth-roles.guard';
+import { AuthRolesGuard } from 'src/auth/guards/auth-roles.guard';
 import { UserType } from 'src/utils/user.type';
 
 @Controller('weather-cache')

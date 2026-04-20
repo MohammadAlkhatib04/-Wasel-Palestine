@@ -32,7 +32,6 @@ export class JwtAuthGuard implements CanActivate {
       });
 
       request[CURRENT_USER_KEY] = payload;
-
       return true;
     } catch {
       throw new UnauthorizedException('Invalid token');

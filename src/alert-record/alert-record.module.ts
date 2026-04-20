@@ -6,7 +6,7 @@ import { AlertRecord } from './entities/alert-record.entity';
 import { AlertSubscription } from '../alert-subscription/entities/alert-subscription.entity';
 import { Incident } from '../incident/entities/incident.entity';
 import { UserModule } from 'src/user/user.module';
-import { AuthRolesGuard } from 'src/user/guards/auth-roles.guard';
+import { AuthRolesGuard } from 'src/auth/guards/auth-roles.guard';
 
 @Module({
   imports: [

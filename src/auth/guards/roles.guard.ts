@@ -5,9 +5,8 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from 'src/utils/constants';
+import { ROLES_KEY, CURRENT_USER_KEY } from 'src/utils/constants';
 import { UserType } from 'src/utils/user.type';
-import { CURRENT_USER_KEY } from 'src/utils/constants';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -24,7 +23,6 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-
     const user = request[CURRENT_USER_KEY];
 
     if (!user) {

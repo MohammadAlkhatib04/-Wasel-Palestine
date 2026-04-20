@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AlertRecordService } from './alert-record.service';
 import { CreateAlertRecordDto } from './dto/create-alert-record.dto';
 import { Roles } from 'src/user/decorator/user-role.decorator';
-import { AuthRolesGuard } from 'src/user/guards/auth-roles.guard';
+import { AuthRolesGuard } from 'src/auth/guards/auth-roles.guard';
 import { UserType } from 'src/utils/user.type';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../user/decorator/current-user.decorator';
