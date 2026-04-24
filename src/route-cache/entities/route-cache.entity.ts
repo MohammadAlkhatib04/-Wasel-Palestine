@@ -3,9 +3,11 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  Index,
 } from 'typeorm';
 
 @Entity('route_cache')
+@Index(['origin_hash', 'destination_hash', 'constraints_hash'], { unique: true })
 export class RouteCache {
   @PrimaryGeneratedColumn()
   id!: number;
