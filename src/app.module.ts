@@ -13,6 +13,7 @@ import { ModerationLogModule } from './moderation-log/moderation-log.module';
 import { AlertRecordModule } from './alert-record/alert-record.module';
 import { RouteCacheModule } from './route-cache/route-cache.module';
 import { WeatherCacheModule } from './weather-cache/weather-cache.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -44,6 +45,7 @@ import { WeatherCacheModule } from './weather-cache/weather-cache.module';
     AlertRecordModule,
     RouteCacheModule,
     WeatherCacheModule,
+    AnalyticsModule,
   ],
 
   controllers: [AppController],
