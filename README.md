@@ -1,98 +1,277 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🚀 Wasel Palestine Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 📌 Overview
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Wasel Palestine is a backend system built using **NestJS, TypeORM, and PostgreSQL** that focuses on:
 
-## Description
+* Road Incidents Management
+* Checkpoint Status Tracking
+* Crowdsourced Reporting System
+* Alert & Notification System
+* External API Integration (Routing & Weather)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+The system enables users to report incidents, track checkpoints, and receive alerts based on their subscriptions.
 
-## Project setup
+---
 
-```bash
-$ npm install
+## 🏗️ Tech Stack
+
+* **Backend Framework:** NestJS
+* **Database:** PostgreSQL
+* **ORM:** TypeORM
+* **Authentication:** JWT (Access + Refresh Tokens)
+* **Validation:** class-validator
+* **External APIs:**
+
+  * OpenRouteService (Routing)
+  * Open-Meteo (Weather)
+
+---
+
+## 🔐 Authentication System
+
+* JWT-based authentication
+* Access Token (short-lived)
+* Refresh Token (long-lived)
+* Secure token storage (hashed refresh tokens)
+* Role-based access control:
+
+  * ADMIN
+  * MODERATOR
+  * CITIZEN
+
+---
+
+## 📦 Core Modules
+
+### 👤 User Module
+
+* Register / Login
+* Refresh Token
+* Logout
+* Get Current User
+
+---
+
+### 🚧 Incident Module
+
+* Create Incident
+* Update / Close / Verify
+* Filter & Query incidents
+* Linked with users (createdBy, verifiedBy, closedBy)
+
+---
+
+### 📍 Checkpoint Module
+
+* Manage checkpoints
+* Track status updates
+* Automatic status history
+
+---
+
+### 📢 Report Module
+
+* Users can submit reports
+* Duplicate detection (based on location)
+* Voting system (up/down)
+* Confidence score calculation
+
+---
+
+### 🔔 Alert System
+
+#### Alert Subscriptions
+
+* Users subscribe to incident types
+
+#### Alert Records
+
+* Automatically created when incidents are verified
+* Tracks notifications sent to users
+
+---
+
+### 🌍 External APIs Integration
+
+#### 🚗 Routing (OpenRouteService)
+
+* Estimate distance and duration between two locations
+* Cached responses to improve performance
+
+Endpoint:
+
+```http
+GET /api/v1/route-cache/estimate
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+#### 🌦️ Weather (Open-Meteo)
 
-# watch mode
-$ npm run start:dev
+* Fetch real-time weather data
+* Cached responses
 
-# production mode
-$ npm run start:prod
+Endpoint:
+
+```http
+GET /api/v1/weather-cache/current
 ```
 
-## Run tests
+---
 
-```bash
-# unit tests
-$ npm run test
+### 📊 Analytics Module (Raw SQL)
 
-# e2e tests
-$ npm run test:e2e
+Provides system insights using raw SQL queries.
 
-# test coverage
-$ npm run test:cov
+Endpoint:
+
+```http
+GET /api/v1/analytics/summary
 ```
 
-## Deployment
+Returns:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+* Incidents grouped by status
+* Reports grouped by category
+* Verified incidents count
+* Alert records count
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+---
+
+## ⚙️ Setup Instructions
+
+### 1) Clone the repository
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+git clone https://github.com/YOUR_REPO.git
+cd YOUR_PROJECT
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+### 2) Install dependencies
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+npm install
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+### 3) Setup environment variables
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Create `.env.development`:
 
-## Stay in touch
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+DB_NAME=wasel_db
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+JWT_SECRET=secret
+JWT_REFRESH_SECRET=refresh_secret
 
-## License
+ORS_API_KEY=your_openrouteservice_key
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+---
+
+### 4) Run the project
+
+```bash
+npm run start:dev
+```
+
+---
+
+## 🔁 API Base URL
+
+```text
+http://localhost:3000/api/v1
+```
+
+---
+
+## 🧪 Example Endpoints
+
+### Auth
+
+* POST `/user/register`
+* POST `/user/login`
+* POST `/user/refresh`
+* POST `/user/logout`
+
+---
+
+### Incidents
+
+* GET `/incident`
+* POST `/incident`
+* PATCH `/incident/:id/verify`
+* PATCH `/incident/:id/close`
+
+---
+
+### Reports
+
+* POST `/reports`
+* GET `/reports`
+* POST `/reports/:id/vote`
+
+---
+
+### Analytics
+
+* GET `/analytics/summary`
+
+---
+
+### External APIs
+
+* GET `/route-cache/estimate`
+* GET `/weather-cache/current`
+
+---
+
+## 🧠 Key Features
+
+* Modular architecture
+* Scalable backend design
+* Secure authentication flow
+* Caching system for performance
+* Real-time contextual data (weather + routing)
+* Automated alert system
+* Raw SQL usage for analytics
+
+---
+
+## 📈 Performance Considerations
+
+* Caching implemented for:
+
+  * Routes
+  * Weather data
+* Reduces external API calls
+* Improves response time
+
+---
+
+## 🧩 Future Improvements
+
+* Dockerization
+* Real-time notifications (WebSockets)
+* Frontend dashboard
+* Advanced analytics
+
+---
+
+## 👨‍💻 Author
+
+Mohammad Alkhatib
+
+---
+
+## 📄 License
+
+This project is for educational purposes.
