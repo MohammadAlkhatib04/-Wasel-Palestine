@@ -4,274 +4,150 @@
 
 Wasel Palestine is a backend system built using **NestJS, TypeORM, and PostgreSQL** that focuses on:
 
-* Road Incidents Management
-* Checkpoint Status Tracking
-* Crowdsourced Reporting System
-* Alert & Notification System
-* External API Integration (Routing & Weather)
+- Road Incidents Management
+- Checkpoint Status Tracking
+- Crowdsourced Reporting System
+- Alert & Notification System
+- External API Integration (Routing & Weather)
+- Analytics and Performance Testing
 
-The system enables users to report incidents, track checkpoints, and receive alerts based on their subscriptions.
+The system enables users to report incidents, track checkpoints, verify road conditions, and receive alerts based on their subscriptions.
 
 ---
 
 ## 🏗️ Tech Stack
 
-* **Backend Framework:** NestJS
-* **Database:** PostgreSQL
-* **ORM:** TypeORM
-* **Authentication:** JWT (Access + Refresh Tokens)
-* **Validation:** class-validator
-* **External APIs:**
+- **Backend Framework:** NestJS
+- **Database:** PostgreSQL
+- **ORM:** TypeORM
+- **Authentication:** JWT (Access + Refresh Tokens)
+- **Validation:** class-validator / class-transformer
+- **API Documentation:** API-Dog / Postman collection
+- **Performance Testing:** k6
+- **Containerization:** Docker + Docker Compose
+- **External APIs:**
+  - OpenRouteService (Routing)
+  - Open-Meteo (Weather)
 
-  * OpenRouteService (Routing)
-  * Open-Meteo (Weather)
+---
+
+## 📚 Project Documentation
+
+Additional documentation is available inside the `docs/` directory:
+
+- `docs/features.md`  
+  Lists all implemented features with feature numbers and related endpoints.
+
+- `docs/progress-report.md`  
+  Contains the project progress report, completed features, challenges, testing summary, and future improvements.
+
+- `docs/api-dog/`  
+  Contains the exported API-Dog/Postman collection used to document and test the API endpoints.
+
+- `docs/k6/`  
+  Contains k6 performance testing scripts.
+
+The feature numbering in `docs/features.md` is aligned with the API-Dog collection folders.
 
 ---
 
 ## 🔐 Authentication System
 
-* JWT-based authentication
-* Access Token (short-lived)
-* Refresh Token (long-lived)
-* Secure token storage (hashed refresh tokens)
-* Role-based access control:
+- JWT-based authentication
+- Access Token
+- Refresh Token
+- Secure refresh token storage using hashing
+- Logout invalidates the stored refresh token
+- Role-based access control:
+  - ADMIN
+  - MODERATOR
+  - CITIZEN
 
-  * ADMIN
-  * MODERATOR
-  * CITIZEN
+Public registration creates a `CITIZEN` user by default. Admin and moderator accounts are managed internally for security reasons.
 
 ---
 
 ## 📦 Core Modules
 
-### 👤 User Module
+### F1 - User & Authentication Module
 
-* Register / Login
-* Refresh Token
-* Logout
-* Get Current User
-
----
-
-### 🚧 Incident Module
-
-* Create Incident
-* Update / Close / Verify
-* Filter & Query incidents
-* Linked with users (createdBy, verifiedBy, closedBy)
+- Register / Login
+- Refresh Token
+- Logout
+- Get Current User
+- Role-based guards
 
 ---
 
-### 📍 Checkpoint Module
+### F2 - Checkpoint Module
 
-* Manage checkpoints
-* Track status updates
-* Automatic status history
-
----
-
-### 📢 Report Module
-
-* Users can submit reports
-* Duplicate detection (based on location)
-* Voting system (up/down)
-* Confidence score calculation
+- Manage checkpoints
+- Search checkpoints
+- Update checkpoint status
+- Automatic status history tracking
 
 ---
 
-### 🔔 Alert System
+### F3 - Checkpoint Status History
+
+- Tracks checkpoint status changes
+- Provides history by checkpoint
+- Provides recent checkpoint status changes
+
+---
+
+### F4 - Incident Module
+
+- Create Incident
+- Update Incident
+- Verify Incident
+- Close Incident
+- Filter and query incidents
+- Linked with users:
+  - createdBy
+  - verifiedBy
+  - closedBy
+
+Verified incidents automatically create moderation logs and alert records for matching subscriptions.
+
+---
+
+### F5 - Report Module
+
+- Users can submit reports
+- Duplicate detection based on category and location
+- Voting system
+- Confidence score calculation
+
+---
+
+### F6 - Alert System
 
 #### Alert Subscriptions
 
-* Users subscribe to incident types
+Users subscribe to incident categories within a geographic radius.
 
 #### Alert Records
 
-* Automatically created when incidents are verified
-* Tracks notifications sent to users
+Alert records are automatically created when a verified incident matches a user subscription.
 
 ---
 
-### 🌍 External APIs Integration
+### F7 - Moderation Logs
 
-#### 🚗 Routing (OpenRouteService)
+Moderation actions are stored for auditability, including:
 
-* Estimate distance and duration between two locations
-* Cached responses to improve performance
+- Incident verification
+- Incident closure
+
+---
+
+### F8 - Route Estimation External API
+
+The system integrates with **OpenRouteService** to estimate distance and duration between two coordinates.
 
 Endpoint:
 
 ```http
 GET /api/v1/route-cache/estimate
 ```
-
----
-
-#### 🌦️ Weather (Open-Meteo)
-
-* Fetch real-time weather data
-* Cached responses
-
-Endpoint:
-
-```http
-GET /api/v1/weather-cache/current
-```
-
----
-
-### 📊 Analytics Module (Raw SQL)
-
-Provides system insights using raw SQL queries.
-
-Endpoint:
-
-```http
-GET /api/v1/analytics/summary
-```
-
-Returns:
-
-* Incidents grouped by status
-* Reports grouped by category
-* Verified incidents count
-* Alert records count
-
----
-
-## ⚙️ Setup Instructions
-
-### 1) Clone the repository
-
-```bash
-git clone https://github.com/YOUR_REPO.git
-cd YOUR_PROJECT
-```
-
----
-
-### 2) Install dependencies
-
-```bash
-npm install
-```
-
----
-
-### 3) Setup environment variables
-
-Create `.env.development`:
-
-```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=postgres
-DB_NAME=wasel_db
-
-JWT_SECRET=secret
-JWT_REFRESH_SECRET=refresh_secret
-
-ORS_API_KEY=your_openrouteservice_key
-```
-
----
-
-### 4) Run the project
-
-```bash
-npm run start:dev
-```
-
----
-
-## 🔁 API Base URL
-
-```text
-http://localhost:3000/api/v1
-```
-
----
-
-## 🧪 Example Endpoints
-
-### Auth
-
-* POST `/user/register`
-* POST `/user/login`
-* POST `/user/refresh`
-* POST `/user/logout`
-
----
-
-### Incidents
-
-* GET `/incident`
-* POST `/incident`
-* PATCH `/incident/:id/verify`
-* PATCH `/incident/:id/close`
-
----
-
-### Reports
-
-* POST `/reports`
-* GET `/reports`
-* POST `/reports/:id/vote`
-
----
-
-### Analytics
-
-* GET `/analytics/summary`
-
----
-
-### External APIs
-
-* GET `/route-cache/estimate`
-* GET `/weather-cache/current`
-
----
-
-## 🧠 Key Features
-
-* Modular architecture
-* Scalable backend design
-* Secure authentication flow
-* Caching system for performance
-* Real-time contextual data (weather + routing)
-* Automated alert system
-* Raw SQL usage for analytics
-
----
-
-## 📈 Performance Considerations
-
-* Caching implemented for:
-
-  * Routes
-  * Weather data
-* Reduces external API calls
-* Improves response time
-
----
-
-## 🧩 Future Improvements
-
-* Dockerization
-* Real-time notifications (WebSockets)
-* Frontend dashboard
-* Advanced analytics
-
----
-
-## 👨‍💻 Author
-
-Mohammad Alkhatib
-
----
-
-## 📄 License
-
-This project is for educational purposes.
