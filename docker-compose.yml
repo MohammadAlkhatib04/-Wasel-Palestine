@@ -1,0 +1,41 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: wasel-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: wasel-DB
+    ports:
+      - '5433:5432'
+    volumes:
+      - wasel_postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    container_name: wasel-backend
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - '3000:3000'
+    environment:
+      PORT: 3000
+      NODE_ENV: development
+
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: 1234
+      DB_DATABASE: wasel-DB
+
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: 1d
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      JWT_REFRESH_EXPIRES_IN: 7d
+
+      ORS_API_KEY: ${ORS_API_KEY}
+
+volumes:
+  wasel_postgres_data:
